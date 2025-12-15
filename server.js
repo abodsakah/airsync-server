@@ -342,22 +342,30 @@ wss.on('connection', (ws) => {
 
 // Heartbeat mechanism to detect dead connections
 const heartbeat = setInterval(() => {
+  // Collect dead connections first to avoid modifying map during iteration
+  const deadConnections = [];
   connections.forEach((connInfo, ws) => {
     if (!connInfo.isAlive) {
-      log('Terminating dead connection');
-      handleDisconnect(ws);
-      return ws.terminate();
+      deadConnections.push(ws);
+    } else {
+      connInfo.isAlive = false;
+      ws.ping();
     }
-    
-    connInfo.isAlive = false;
-    ws.ping();
+  });
+  
+  // Terminate dead connections
+  deadConnections.forEach((ws) => {
+    log('Terminating dead connection');
+    handleDisconnect(ws);
+    ws.terminate();
   });
 }, HEARTBEAT_INTERVAL);
 
 // Cleanup on server shutdown
 wss.on('close', () => {
   clearInterval(heartbeat);
-  rooms.forEach((room, code) => {
+  // Use Array.from to avoid modification during iteration
+  Array.from(rooms.keys()).forEach((code) => {
     cleanupRoom(code);
   });
 });
