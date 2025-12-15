@@ -1,0 +1,24 @@
+{
+  "name": "airsync-server",
+  "version": "1.0.0",
+  "description": "WebSocket relay server for AirSync - enables Mac and Android clients to communicate across different networks",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "websocket",
+    "relay",
+    "airsync",
+    "server"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
